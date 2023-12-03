@@ -22,7 +22,6 @@ export const metadata: Metadata = {
     // icon: '../public/assets/images/site-logo.svg'
   }
 }
-
 export default function RootLayout({
   children,
 }: {
