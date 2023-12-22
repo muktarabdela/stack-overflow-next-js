@@ -20,7 +20,7 @@ import { type } from 'os';
 import Image from 'next/image';
 import { Badge } from '../ui/badge';
 import { createQuestion } from '@/lib/actions/question.action';
-import router from 'next/router';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface Props {
     type?: string;
@@ -28,7 +28,11 @@ interface Props {
     questionDetails?: string;
 }
 
-const Question = () => {
+const Question = ({ mongoUserId }: Props) => {
+    const router = useRouter();
+    const pathname = usePathname();
+
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const type = "Edit"
     const editorRef = useRef<any>(null);
@@ -43,13 +47,19 @@ const Question = () => {
     });
 
     // 2. Define a submit handler.
-    // 2. Define a submit handler.
     async function onSubmit(values: z.infer<typeof QuestionSchema>) {
         setIsSubmitting(true);
         try {
-            await createQuestion({});
-        }
+            await createQuestion({
+                title: values.title,
+                content: values.explanation,
+                tags: values.tags,
+                author: JSON.parse(mongoUserId),
+                path: pathname,
 
+            });
+            router.push('/');
+        }
         catch (error) {
             console.log(error)
         } finally {
@@ -127,7 +137,7 @@ const Question = () => {
                                     }}
                                     onBlur={field.onBlur}
                                     onEditorChange={(content) => field.onChange(content)}
-                                    initialValue="<p>This is the initial content of the editor.</p>"
+                                    initialValue=""
                                     init={{
                                         height: 500,
                                         menubar: false,
