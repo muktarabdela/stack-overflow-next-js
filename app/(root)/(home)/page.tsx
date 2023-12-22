@@ -6,65 +6,11 @@ import HomeFilters from "@/components/home/HomeFilters"
 import { HomePageFilters } from "@/constants/filter"
 import NoResult from "@/components/shared/NoResult"
 import QuestionCard from "@/components/cards/QuestionCard"
+import { getQuestions } from "@/lib/actions/question.action"
 
-const questions = [
-    {
-        _id: '1',
-        title: 'Best Course NextJS',
-        tags: [{ _id: '1', name: 'nextjs' }, { _id: '2', name: 'react' }],
-        author: {
-            _id: 'authorId1',
-            name: 'muktar',
-            picture: 'url_to_picture1',
-            clerkId: 'clerkId1',
-        },
-        upvotes: ['8777677677'],
-        views: 10000000,
-        answers: [
-            { /* Answer object structure goes here */ },
-            { /* Another answer object structure goes here */ },
-        ],
-        createdAt: new Date('2023-09-01'),
-    },
-    {
-        _id: '2',
-        title: 'This Is Demo Question',
-        tags: [{ _id: '1', name: 'DEMO' }, { _id: '2', name: 'redux' }],
-        author: {
-            _id: 'authorId2',
-            name: 'nura',
-            picture: 'url_to_picture2',
-            clerkId: 'clerkId2',
-        },
-        upvotes: ['4'],
-        views: 10,
-        answers: [
-            { /* Answer object structure goes here */ },
-            { /* Another answer object structure goes here */ },
-        ],
-        createdAt: new Date('2022-09-01'),
-    },
-    {
-        _id: '3',
-        title: 'which are types of thermal insulation for',
-        tags: [{ _id: '1', name: 'instulation' }, { _id: '2', name: 'react' }],
-        author: {
-            _id: 'authorId3',
-            name: 'hamza',
-            picture: 'url_to_picture3',
-            clerkId: 'clerkId3',
-        },
-        upvotes: ['20'],
-        views: 106,
-        answers: [
-            { /* Answer object structure goes here */ },
-            { /* Another answer object structure goes here */ },
-        ],
-        createdAt: new Date('2020-09-01'),
-    },
-];
-
-const Home = () => {
+const Home = async () => {
+    const result = await getQuestions({})
+    console.log(result)
     return (
         <>
             <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
@@ -93,8 +39,8 @@ const Home = () => {
             <HomeFilters />
 
             <div className="mt-10 flex w-full flex-col gap-6">
-                {questions.length > 0 ?
-                    questions.map((question) => (
+                {result.questions.length > 0 ?
+                    result.questions.map((question) => (
                         <QuestionCard
                             key={question._id}
                             _id={question._id}

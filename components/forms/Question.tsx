@@ -19,6 +19,8 @@ import { QuestionSchema } from "@/lib/validations"
 import { type } from 'os';
 import Image from 'next/image';
 import { Badge } from '../ui/badge';
+import { createQuestion } from '@/lib/actions/question.action';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface Props {
     type?: string;
@@ -26,7 +28,11 @@ interface Props {
     questionDetails?: string;
 }
 
-const Question = () => {
+const Question = ({ mongoUserId }: Props) => {
+    const router = useRouter();
+    const pathname = usePathname();
+
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const type = "Edit"
     const editorRef = useRef<any>(null);
@@ -41,10 +47,24 @@ const Question = () => {
     });
 
     // 2. Define a submit handler.
-    function onSubmit(values: z.infer<typeof QuestionSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values);
+    async function onSubmit(values: z.infer<typeof QuestionSchema>) {
+        setIsSubmitting(true);
+        try {
+            await createQuestion({
+                title: values.title,
+                content: values.explanation,
+                tags: values.tags,
+                author: JSON.parse(mongoUserId),
+                path: pathname,
+
+            });
+            router.push('/');
+        }
+        catch (error) {
+            console.log(error)
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, field: any) => {
@@ -111,8 +131,13 @@ const Question = () => {
                                 <Editor
                                     apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
                                     // @ts-ignore
-                                    onInit={(evt, editor) => editorRef.current = editor}
-                                    initialValue="<p>This is the initial content of the editor.</p>"
+                                    onInit={(evt, editor) => {
+                                        // @ts-ignore
+                                        editorRef.current = editor
+                                    }}
+                                    onBlur={field.onBlur}
+                                    onEditorChange={(content) => field.onChange(content)}
+                                    initialValue=""
                                     init={{
                                         height: 500,
                                         menubar: false,
