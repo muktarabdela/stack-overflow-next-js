@@ -19,6 +19,8 @@ import { QuestionSchema } from "@/lib/validations"
 import { type } from 'os';
 import Image from 'next/image';
 import { Badge } from '../ui/badge';
+import { createQuestion } from '@/lib/actions/question.action';
+import router from 'next/router';
 
 interface Props {
     type?: string;
@@ -41,10 +43,18 @@ const Question = () => {
     });
 
     // 2. Define a submit handler.
-    function onSubmit(values: z.infer<typeof QuestionSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values);
+    // 2. Define a submit handler.
+    async function onSubmit(values: z.infer<typeof QuestionSchema>) {
+        setIsSubmitting(true);
+        try {
+            await createQuestion({});
+        }
+
+        catch (error) {
+            console.log(error)
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, field: any) => {
@@ -111,7 +121,12 @@ const Question = () => {
                                 <Editor
                                     apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
                                     // @ts-ignore
-                                    onInit={(evt, editor) => editorRef.current = editor}
+                                    onInit={(evt, editor) => {
+                                        // @ts-ignore
+                                        editorRef.current = editor
+                                    }}
+                                    onBlur={field.onBlur}
+                                    onEditorChange={(content) => field.onChange(content)}
                                     initialValue="<p>This is the initial content of the editor.</p>"
                                     init={{
                                         height: 500,
