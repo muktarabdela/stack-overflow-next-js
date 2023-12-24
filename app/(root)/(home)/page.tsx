@@ -7,9 +7,8 @@ import { HomePageFilters } from "@/constants/filter"
 import NoResult from "@/components/shared/NoResult"
 import QuestionCard from "@/components/cards/QuestionCard"
 import { getQuestions } from "@/lib/actions/question.action"
-
 const Home = async () => {
-    const result = await getQuestions({})
+    const result = (await getQuestions({})) ?? { questions: [] };
     console.log(result)
     return (
         <>
@@ -21,7 +20,6 @@ const Home = async () => {
                     </Button>
                 </Link>
             </div>
-
             <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
                 <LocalSearchBar
                     route="/"
@@ -37,7 +35,6 @@ const Home = async () => {
                 />
             </div>
             <HomeFilters />
-
             <div className="mt-10 flex w-full flex-col gap-6">
                 {result.questions.length > 0 ?
                     result.questions.map((question) => (
@@ -60,6 +57,7 @@ const Home = async () => {
                     />
                 }
             </div>
+
 
         </>
     )
