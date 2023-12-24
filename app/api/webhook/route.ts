@@ -26,9 +26,7 @@ export async function POST(req: Request) {
 
     const payload = await req.json();
     const body = JSON.stringify(payload);
-
     const wh = new Webhook(WEBHOOK_SECRET);
-
     let evt: WebhookEvent;
 
     try {
@@ -86,9 +84,7 @@ export async function POST(req: Request) {
         const deletedUser = await deleteUser({
             clerkId: id!,
         });
-
         return NextResponse.json({ message: "OK", user: deletedUser });
     }
-
     return NextResponse.json({ message: "OK" });
 }
