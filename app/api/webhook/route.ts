@@ -5,8 +5,7 @@ import { createUser, deleteUser, updateUser } from "@/lib/actions/User.action";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const WEBHOOK_SECRET = process.env.NEXT_CLERK_WEBHOOK_SECRET;
-  if (!WEBHOOK_SECRET) {
+  if (!process.env.WEBHOOK_SECRET) {
     throw new Error(
       "Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local"
     );
@@ -26,7 +25,7 @@ export async function POST(req: Request) {
 
   const payload = await req.json();
   const body = JSON.stringify(payload);
-  const wh = new Webhook(WEBHOOK_SECRET);
+  const wh = new Webhook(process.env.WEBHOOK_SECRET);
   let evt: WebhookEvent;
 
   try {
